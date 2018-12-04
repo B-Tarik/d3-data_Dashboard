@@ -2,46 +2,46 @@ import {drawBar, highlightBars} from './bar.js';
 
 function createMap(width, height) {
 	d3.select('#map')
-			.attr('width', width)
-			.attr('height', height)
+		.attr('width', width)
+		.attr('height', height)
 		.append('text')
-			.attr('x', width/2)
-			.attr('y', '16px')
-			.attr('font-size', '24px')
-			.style('text-anchor', 'middle')
-			.classed("map-title", true);
+		.attr('x', width/2)
+		.attr('y', '16px')
+		.attr('font-size', '24px')
+		.style('text-anchor', 'middle')
+		.classed("map-title", true);
 }
 
 function drawMap(geoData, climateData, year, dataType) {
-	const map         = d3.select('#map'),
-				projection  = d3.geoMercator()
-												.scale(110)
-												.translate([
-													+map.attr('width') / 2,
-													+map.attr('height') / 1.7
-												]),
-				path				= d3.geoPath()
-												.projection(projection);
+	const map         	= d3.select('#map'),
+		projection  	= d3.geoMercator()
+							.scale(110)
+							.translate([
+								+map.attr('width') / 2,
+								+map.attr('height') / 1.7
+							]),
+		path			= d3.geoPath()
+							.projection(projection);
 		
 	d3.select('#year-val').text(year);
 
 	geoData.forEach(d => {
-		let countries = climateData.filter(row => row.countryCode === d.id),
-				name 			= '';
+		let countries 	= climateData.filter(row => row.countryCode === d.id),
+				name 	= '';
 		if(countries.length > 0) name = countries[0].country;
 		d.properties 	= countries.find(c => c.year === year) || {country: name};
 	});
 
-	const colors 	= ['#f1c40f', '#e67e22', '#e74c3c', '#c0392b'],
-				domains	= {
-					emissions: [0, 2.5e5, 1e6, 5e6],
-					emissionsPerCapita: [0, 0.5, 2, 10]
-				},
-				mapColorScale	= d3.scaleLinear()
-													.domain(domains[dataType])
-													.range(colors),
-				update	= map.selectAll('.country')
-										 .data(geoData);
+	const colors 		= ['#f1c40f', '#e67e22', '#e74c3c', '#c0392b'],
+		domains			= {
+							emissions: [0, 2.5e5, 1e6, 5e6],
+							emissionsPerCapita: [0, 0.5, 2, 10]
+						},
+		mapColorScale	= d3.scaleLinear()
+							.domain(domains[dataType])
+							.range(colors),
+		update			= map.selectAll('.country')
+							.data(geoData);
 	
 	update
 		.enter()					
@@ -50,10 +50,10 @@ function drawMap(geoData, climateData, year, dataType) {
 			.attr('d', path)
 			.on('click', function() {
 				let currentDataType = d3.select('input:checked')
-																.property('value'),
-						country					= d3.select(this),
-						isActive				= country.classed('active'),
-						countryName			= isActive ? '' : country.data()[0].properties.country;
+										.property('value'),
+					country			= d3.select(this),
+					isActive		= country.classed('active'),
+					countryName		= isActive ? '' : country.data()[0].properties.country;
 
 				drawBar(climateData, currentDataType, countryName);
 				highlightBars(+d3.select('#year').property('value'));
