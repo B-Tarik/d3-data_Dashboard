@@ -1,7 +1,7 @@
 About the project:
 ============
 
-it's a D3 Data Dashboard project about co2 emissions by year.
+it's a D3 Data Dashboard project about co2 emissions by year.  
 link: https://b-tarik.github.io/d3-data_Dashboard/
 
 ### Details
